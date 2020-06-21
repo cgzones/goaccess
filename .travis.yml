@@ -1,19 +1,17 @@
-dist: xenial
 git:
   depth: 3
 
 language: c
+os: linux
+dist: bionic
 
-compiler:
-  - clang
-  - gcc
 
 env:
-  - CONFIGURE_OPTIONS=""
-  - CONFIGURE_OPTIONS="--enable-geoip=legacy --enable-utf8"
-  - CONFIGURE_OPTIONS="--enable-geoip=legacy --enable-utf8 --enable-debug"
-  - CONFIGURE_OPTIONS="--enable-geoip=mmdb --enable-utf8 --with-openssl"
-  - CONFIGURE_OPTIONS="--enable-geoip=legacy --enable-utf8 --with-openssl --with-getline"
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "eE3mqPwM7fb2OHkhf/7QTqJn//xzrFioNbaDdLnAiSHKaXWG/yNnwJPwPaALeadP+hBUHOBcXVHZJJ4F44p+DlAHrInEU3CIfwHhi7Ix5edr8fYe3abPAXebKitWytf3aAPMh343XsAaSfwkEC77SB2SrONZK8/q/Ue7oSUIKCR7Ds7+Ka1BJM44AKrcnVMgvZuc1Z/BdFgwDoova8xbLDqiVejmeDxW0KPRDjKJwcb5KXN/Zk2JG7R6YuGfHvIQI2g956qmlkE0YCbKUq901iRm8VHKgNgrxz/u4T9bbVhC8pNN7QfMI7u9nu2fETqHuz3BvIs2zc3HrbAaPfW9pCpFdjuC2ZO/RTL5bLTbQNkambg0Q5OK+wQ8R2UrTmQPqwDygLTll/otN76e8Tx2PiPsMwVIr3qUHlWqBNzkJcQ5fU2eD6qDyTVKtWYwirfHA4YfGiZXYGcrlIjtehh+omB22K3zdbVfBGog0OrJRwbXo1OQQ1D46wBoug0MtIYe53BeXPn3DbqaY2SNCyOhvoW5h4xD2Tya0jqCv3N/K/hUz9clQ5dpQP8cxHAncY1FLuGCygCxsBF6+DgWni9cNQ2s/yBAIXw4IBbvSM2EJDErj0cdWTBO4axlDPCpsUFDtK8ZI3/crVk02K7yvM5Ls2GU82zqDpmlLtEFthTq1Co="
+
 
 addons:
   apt:
@@ -27,12 +25,15 @@ addons:
       - libmaxminddb-dev
       - gettext
       - autopoint
+  coverity_scan:
+    project:
+      name: "cgzones/goaccess"
+      description: "Build submitted via Travis CI"
+    notification_email: cgzones@googlemail.com
+    build_command_prepend: "autoreconf -fiv -Wall; ./configure --enable-utf8 --enable-geoip=mmdb --with-openssl; make clean"
+    build_command: "make"
+    branch_pattern: coverity_scan
+
 
 script:
-  - autoreconf -fiv -Wall
-  - ./configure CFLAGS=-Werror $CONFIGURE_OPTIONS
-  - make -j
-  - sudo env "PATH=$PATH" make install
-
-after_success:
-  - goaccess --version
+ - cat /home/travis/build/cgzones/goaccess/cov-int/scm_log.txt
