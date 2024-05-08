@@ -719,7 +719,8 @@ char *
 input_string (WINDOW *win, int pos_y, int pos_x, size_t max_width, const char *str,
               int enable_case, int *toggle_case) {
   char *s = NULL, *tmp;
-  size_t i, c, pos = 0, x = 0, quit = 1, size_x = 0, size_y = 0;
+  size_t i, pos = 0, x = 0, quit = 1, size_x = 0, size_y = 0;
+  int c;
 
   getmaxyx (win, size_y, size_x);
   size_x -= 4;

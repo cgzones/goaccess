@@ -177,7 +177,12 @@ sanitize_utf8 (const char *str, int len) {
  * because the position in memory may change */
 static struct pollfd *
 get_pollfd (int fd) {
-  struct pollfd *pfd, *efd = fdstate + nfdstate;
+  struct pollfd *pfd, *efd;
+
+  if (fdstate == NULL)
+    return fdstate;
+
+  efd = fdstate + nfdstate;
 
   for (pfd = fdstate; pfd < efd; pfd++) {
     if (pfd->fd == fd)
@@ -2468,7 +2473,7 @@ ws_write_fifo (WSPipeOut *pipeout, char *buffer, int len) {
   }
 
   if (pipeout->fifoqueue == NULL) {
-    pipeout->status &= ~WS_SENDING;
+    pipeout->status &= (unsigned)~WS_SENDING;
     set_pollfd (pipeout->fd, 0);
   }
 
