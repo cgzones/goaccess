@@ -47,6 +47,7 @@ void SHA1Transform (uint32_t state[5], uint8_t buffer[64]);
 
 /* Hash a single 512-bit block. This is the core of the algorithm. */
 
+__attribute__((no_sanitize ("unsigned-integer-overflow", "unsigned-shift-base")))
 void
 SHA1Transform (uint32_t state[5], uint8_t buffer[64]) {
   uint32_t a, b, c, d, e;
